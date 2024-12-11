@@ -27,3 +27,30 @@ class Admin:
 
         self.login = Button(root, text="Login", command=self.admin_login)
         self.login.place(relx=0.5, rely=0.65, anchor=CENTER)
+
+    # Displays a message box when the admin_login function is called and returns with incorrect info
+    def message_box(self):
+        messagebox.showinfo("Try again.", "Invalid login credentials, please try again")
+
+    def admin_login(self):
+        # Have to connect to database and create cursor object
+        conn = sqlite3.connect('library.db')
+        cursor = conn.cursor()
+
+        # Checks and gets the username and password entered from the entry labels
+        username_entered = self.username.get()
+        password_entered = self.password.get()
+
+        # Fetches the query from the admin table that has admin credentials and checks it by username_entered and password_entered
+        cursor.execute("SELECT * FROM admin WHERE admin_user=? and admin_password=?", (username_entered, password_entered))
+        outcome = cursor.fetchone()
+
+        # The reason we imported the os module so we can successfully close the login screen upon successful login and open the main application
+        if outcome:
+            self.root.after(500, lambda: os.system('python main.py'))
+            self.root.after(500, self.root.destroy)
+        # The message box we defined earlier displays upon failed login
+        else:
+            self.message_box()
+        # Close the connection to end database usage properly
+        conn.close()
