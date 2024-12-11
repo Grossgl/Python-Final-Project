@@ -32,3 +32,32 @@ class Library:
             print("Member", member_id, "has been removed.")
         else:
             print("Member not found")
+
+    def issue_book(self, isbn, member_id):
+        if isbn in self.books and member_id in self.members:
+            book = self.books[isbn]
+            member = self.members[member_id]
+            today = date.today()
+            if book.issued_to is None:
+                book.issue(member)
+                member.borrow_book(book)
+                
+                print(f"Book {book.title} issued to {member.name} on {today}.")
+            else:
+                print("Book is already issued.")
+        else:
+            print("Book or Member not found.")
+    
+    def return_book(self, isbn, member_id):
+        if isbn in self.books and member_id in self.members:
+            book = self.books[isbn]
+            member = self.members[member_id]
+            today = date.today()
+            if book.issued_to == member:
+                book.return_book()
+                member.return_book(book)
+                print(f"Book {book.title} returned by {member.name} on {today}.")
+            else:
+                print("Book was not issued to this member.")
+        else:
+            print("Book or Member not found.")
